@@ -16,4 +16,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD docker-initscript.sh /sbin/docker-initscript.sh
 RUN chmod 755 /sbin/docker-initscript.sh
 EXPOSE 5432/tcp
-CMD ["/sbin/docker-initscript.sh"]
+ENTRYPOINT ["/sbin/docker-initscript.sh"]
+CMD ["pgbouncer"]

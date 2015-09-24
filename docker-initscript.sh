@@ -49,15 +49,6 @@ EOFEOF
 
     DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
-    echo "Setting ${DB_NAME}_PGBOUNCER config var"
-
-    if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
-    then
-        export ${DB_NAME}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:5432/$DB_NAME?prepared_statements=false
-    else
-        export ${DB_NAME}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:5432/$DB_NAME
-    fi
-
     cat >> /etc/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
