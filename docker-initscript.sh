@@ -10,8 +10,8 @@ DB_USER=${DB_USER:-}
 DB_PASS=${DB_PASS:-}
 
 POOL_MODE=${PGBOUNCER_POOL_MODE:-session}
-SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
-
+SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY:-}
+PGBOUNCER_PREPARED_STATEMENTS=${PGBOUNCER_PREPARED_STATEMENTS:-}
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
 if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
@@ -24,7 +24,7 @@ if [ "$1" = 'pgbouncer' ]; then
     mkdir -p /etc/pgbouncer/
     cat >> /etc/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
-listen_addr = localhost
+listen_addr = 0.0.0.0
 listen_port = 5432
 auth_type = md5
 auth_file = /etc/pgbouncer/users.txt
