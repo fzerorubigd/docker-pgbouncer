@@ -5,9 +5,9 @@ set -euo pipefail
 POSTGRESQL_HOST=${POSTGRESQL_HOST:-localhost}
 POSTGRESQL_POSRT=${POSTGRESQL_PORT:-5432}
 
-DB_NAME=${DB_NAME:-}
-DB_USER=${DB_USER:-}
-DB_PASS=${DB_PASS:-}
+POSTGRES_DB=${POSTGRES_DB:-}
+POSTGRES_USER=${POSTGRES_USER:-}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
 
 POOL_MODE=${PGBOUNCER_POOL_MODE:-session}
 SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY:-}
@@ -47,14 +47,14 @@ ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETER:-extra_float_di
 [databases]
 EOFEOF
 
-    DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+    DB_MD5_PASS="md5"`echo -n ${POSTGRES_PASSWORD}${POSTGRES_USER} | md5sum | awk '{print $1}'`
 
     cat >> /etc/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_MD5_PASS"
+"$POSTGRES_USER" "$DB_MD5_PASS"
 EOFEOF
 
     cat >> /etc/pgbouncer/pgbouncer.ini << EOFEOF
-$DB_NAME= host=${POSTGRESQL_HOST} port=${POSTGRESQL_PORT} user=${DB_USER}
+$POSTGRES_DB= host=${POSTGRESQL_HOST} port=${POSTGRESQL_PORT} user=${POSTGRES_USER}
 EOFEOF
 
     su - postgres -c "/usr/sbin/pgbouncer /etc/pgbouncer/pgbouncer.ini"
