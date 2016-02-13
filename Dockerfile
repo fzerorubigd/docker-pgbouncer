@@ -1,17 +1,18 @@
-FROM debian:jessie
+FROM alpine:3.3
+
 MAINTAINER fzerorubigd <fzero@rubi.gd> @fzerorubigd
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		wget \
-	&& rm -rf /var/lib/apt/lists/*
-
-RUN wget --quiet --no-check-certificate -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-RUN apt-get update
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		pgbouncer \
-	&& rm -rf /var/lib/apt/lists/*
+RUN apk update && \
+	apk add alpine-sdk openssl-dev libwebsockets-dev c-ares-dev libevent-dev autoconf automake libtool && \
+	git clone --recursive https://github.com/pgbouncer/pgbouncer.git  && \
+	cd pgbouncer && git checkout pgbouncer_1_7 && \
+	./autogen.sh && \
+	./configure && \
+	make && \
+	make install && \
+	apk del alpine-sdk autoconf automake libtool && \
+	cd / && \
+	rm -rf /pgbouncer 
 
 ADD docker-initscript.sh /sbin/docker-initscript.sh
 RUN chmod 755 /sbin/docker-initscript.sh
