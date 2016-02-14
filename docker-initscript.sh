@@ -18,6 +18,7 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
     SERVER_RESET_QUERY="DISCARD ALL;"
 fi
 if [ "$1" = 'pgbouncer' ]; then
+    mkdir -p /etc/pgbouncer
     rm -rf /etc/pgbouncer/pgbouncer.ini
     rm -rf /etc/pgbouncer/users.txt
 
@@ -56,8 +57,10 @@ EOFEOF
     cat >> /etc/pgbouncer/pgbouncer.ini << EOFEOF
 $POSTGRES_DB= host=${POSTGRESQL_HOST} port=${POSTGRESQL_PORT} user=${POSTGRES_USER}
 EOFEOF
-
-    su - postgres -c "/usr/sbin/pgbouncer /etc/pgbouncer/pgbouncer.ini"
+    mkdir -p /var/lib/postgresql
+    chown -R postgres:postgres /var/lib/postgresql
+    chown -R postgres:root /etc/pgbouncer
+    su - postgres -c "/usr/local/bin/pgbouncer /etc/pgbouncer/pgbouncer.ini"
 else
     exec "$@"
 fi;
